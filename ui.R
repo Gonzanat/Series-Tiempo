@@ -43,7 +43,18 @@ myFluidPage <- fluidPage(
       ##Lista desplegable de variables que contiene el dataset, para que el usuario pueda seleccionar la que quiere analizar:
       selectInput("listVar", "Variables:",
                   choices=colnames(myData)),
+      
+      
+      selectInput("listvarCo", "Variable for Correlation:",
+                 choices=colnames(myData)),
+      
+      
+      actionButton("bottonCorrelation", "Correlation"),
+      p("Click the button to get the correlation between selected variables."),
+      
       tags$hr(),
+      
+      
 
 
       ##Barra para definir número de divisiones del histograma:
@@ -53,6 +64,7 @@ myFluidPage <- fluidPage(
                   max = 50,
                   value = 30),
       tags$hr(),
+    
 
 
       ##Control para recibir el valor del quantil que se quiere calcular:
@@ -124,7 +136,11 @@ myFluidPage <- fluidPage(
 
       #Mostar los datos que entraron por parámetro.
       h4("Observations"),
-      tableOutput("Data")
+      tableOutput("Data"),
+      
+      #Mostrar la correlaciln entre las variables seleccionadas
+      h4("Correlation:"),
+      tableOutput("Correlation")
 
     )
 

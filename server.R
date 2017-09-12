@@ -289,9 +289,48 @@ myShinyServer <- function(input, output, session) {
                       label = "Variables",
                       choices = colnames(myData)
         )
+        
+
+        
+        updateSelectInput(session, "listvarCo", "Variable for Correlation:",
+                          choices = colnames(myData)
+        )
+        
 
    }
   })
+  
+  
+  
+  output$Correlation <- eventReactive(input$bottonCorrelation, {
+    
+    print("pasa por aqui")
+    
+    if(is.null(read_data())){
+      return()
+      
+    }else{
+      myData<-read_data()
+    
+      if(is.numeric(myData[,input$listVar]) & is.numeric(myData[,input$listvarCo]) ){
+      
+        print("pasa por aqui 2222")
+      
+        matrix1 = cbind(myData[,input$listVar], myData[,input$listvarCo])
+      
+        colnames(matrix1) <- c(input$listVar, input$listvarCo)
+    
+        cor(matrix1)
+      
+        print(cor(matrix1))
+      
+      }else{
+      
+        return()
+      }
+  }
+  })
+  
 
 
 
