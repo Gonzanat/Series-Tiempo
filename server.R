@@ -322,6 +322,7 @@ myShinyServer <- function(input, output, session) {
     
         cor(matrix1)
       
+        #Need revew
         print(cor(matrix1))
       
       }else{
