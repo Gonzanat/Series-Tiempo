@@ -15,7 +15,6 @@ library(e1071)
 
 ##1. Declaración variables: Recibir lo del usuario final
 myData <- c()
-Mcorrelation<-0
 ##data<-read.csv(file.choose(),header=TRUE, sep=",", dec=".")
 
 ##data<- read.csv('C:/Users/gonzanat/Desktop/Especialización Analítica/Toma de decisiones bajo incertidumbre/Entregas Semanales/Primera Semana/Supermarket Transactions .csv', header=TRUE, sep=",", dec="." );
