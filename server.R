@@ -8,6 +8,7 @@
 #
 library(shiny)
 library(e1071)
+library(corrplot)
 
 
 ##3. Definición de la parte lógica:
@@ -168,7 +169,7 @@ myShinyServer <- function(input, output, session) {
 
 
 
-  ##FUNCIONALIDAD: Kurtosis---> Aquí lo que quiero es calcular la curtosis, y concluirle al negocio, qué se concluye con la curtosis
+  #FUNCIONALIDAD: Kurtosis
   output$kurtosis <-renderText({
     if(is.null(read_data())){
       return()
@@ -186,7 +187,7 @@ myShinyServer <- function(input, output, session) {
   }
   )
 
-  ##FUNCIONALIDAD: Sesgo---> Aquí lo que quiero es calcular la sesgo, y concluirle al negocio, qué se concluye con la curtosis
+  ##FUNCIONALIDAD: Sesgo
   output$sesgo <-renderText({
     if(is.null(read_data())){
       return()
@@ -302,35 +303,38 @@ myShinyServer <- function(input, output, session) {
   
   
   
-  output$Correlation <- eventReactive(input$bottonCorrelation, {
-    
-    print("pasa por aqui")
+
+  output$Correlation  <- renderPlot({
     
     if(is.null(read_data())){
       return()
       
     }else{
       myData<-read_data()
-    
-      if(is.numeric(myData[,input$listVar]) & is.numeric(myData[,input$listvarCo]) ){
       
-        print("pasa por aqui 2222")
-      
+      if(is.numeric(myData[,input$listVar]) & is.numeric(myData[,input$listvarCo]) ){    
+        print("creando graph correlacion...")
+        
         matrix1 = cbind(myData[,input$listVar], myData[,input$listvarCo])
-      
+        
         colnames(matrix1) <- c(input$listVar, input$listvarCo)
+        
+        M<-cor(matrix1)
     
-        cor(matrix1)
-      
-        #Need revew
-        print(cor(matrix1))
-      
+        corrplot(M, method="circle")
+        
       }else{
-      
+        
+        print("No hay correlacion")
+        
         return()
       }
-  }
+   }
+      
   })
+
+  
+  
   
 
 

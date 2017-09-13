@@ -15,6 +15,7 @@ library(e1071)
 
 ##1. Declaración variables: Recibir lo del usuario final
 myData <- c()
+Mcorrelation<-0
 ##data<-read.csv(file.choose(),header=TRUE, sep=",", dec=".")
 
 ##data<- read.csv('C:/Users/gonzanat/Desktop/Especialización Analítica/Toma de decisiones bajo incertidumbre/Entregas Semanales/Primera Semana/Supermarket Transactions .csv', header=TRUE, sep=",", dec="." );
@@ -47,10 +48,6 @@ myFluidPage <- fluidPage(
       
       selectInput("listvarCo", "Variable for Correlation:",
                  choices=colnames(myData)),
-      
-      
-      actionButton("bottonCorrelation", "Correlation"),
-      p("Click the button to get the correlation between selected variables."),
       
       tags$hr(),
       
@@ -140,7 +137,7 @@ myFluidPage <- fluidPage(
       
       #Mostrar la correlaciln entre las variables seleccionadas
       h4("Correlation:"),
-      tableOutput("Correlation")
+      plotOutput("Correlation")
 
     )
 
