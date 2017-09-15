@@ -1,11 +1,10 @@
 Package: PracSeriesTiempo
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Playing with your data.
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Natalia González
+Maintainer: Natalia González <ngonzal5@hotmail.com>
+Description: Package to analysis empirical data by a Shiny application
+License: MIT
 Encoding: UTF-8
 LazyData: true
