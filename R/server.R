@@ -9,6 +9,7 @@
 library(shiny)
 library(e1071)
 library(corrplot)
+library(boot)
 
 
 ##3. Definición de la parte lógica:
@@ -51,13 +52,58 @@ myShinyServer <- function(input, output, session) {
 
     }else{
 
+
+     ##---De aquí hacia abajo no se ha cambiado nada
+
       myData<- read_data()
 
       #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
 
       if(is.numeric(myData[,input$listVar])){
 
+        ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+        ##Si no está seleccinado, se sigue con el análisis normal
+
         x<-myData[,input$listVar]
+
+        ##2017-09-12: aplicación bootstrapping
+
+
+        if (is.null(input$Boots)){
+
+          ##Si no está activada la opción de boots no se hace nada.
+
+        }else{
+
+          ##De lo contrario, es porque el usuario quiere aplicar bootstrapping.
+          ##Se valida sobre qué estadístico quiere aplicar muestreo el usuario
+          ##para inferir el estadístico que describe la muestra.
+
+          if (input$Boots == "mean"){
+
+            call_boots <- boot(data=x,statistic=fun_mean, R=1000)
+            x<-call_boots$t
+
+          }else if (input$Boots == "median"){
+
+              call_boots <- boot(data=x,statistic=fun_median, R=1000)
+              x<-call_boots$t
+          }else if (input$Boots == "desviation") {
+
+            call_boots <- boot(data=x,statistic=fun_sd, R=1000)
+            x<-call_boots$t
+
+          }else if (input$Boots == "variance"){
+
+            call_boots <- boot(data=x,statistic=fun_var, R=1000)
+            x<-call_boots$t
+
+          }
+
+        }
+
+
+
 
         #Generar los bins:
         bins <- seq(min(x), max(x), length.out = input$bins + 1)
@@ -100,6 +146,8 @@ myShinyServer <- function(input, output, session) {
           curve(dexp(x), col=30, add= TRUE, lty=2, lwd = 2)
 
         }
+
+
     }else{
 
 
@@ -249,6 +297,8 @@ myShinyServer <- function(input, output, session) {
       myData<-read_data()
 
       if(is.numeric(myData[,input$listVar])){
+
+
         x<-myData[,input$listVar]
         summary(x)
       }else{
@@ -290,52 +340,52 @@ myShinyServer <- function(input, output, session) {
                       label = "Variables",
                       choices = colnames(myData)
         )
-        
 
-        
+
+
         updateSelectInput(session, "listvarCo", "Variable for Correlation:",
                           choices = colnames(myData)
         )
-        
+
 
    }
   })
-  
-  
-  
+
+
+
 
   output$Correlation  <- renderPlot({
-    
+
     if(is.null(read_data())){
       return()
-      
+
     }else{
       myData<-read_data()
-      
-      if(is.numeric(myData[,input$listVar]) & is.numeric(myData[,input$listvarCo]) ){    
+
+      if(is.numeric(myData[,input$listVar]) & is.numeric(myData[,input$listvarCo]) ){
         print("creando graph correlacion...")
-        
+
         matrix1 = cbind(myData[,input$listVar], myData[,input$listvarCo])
-        
+
         colnames(matrix1) <- c(input$listVar, input$listvarCo)
-        
+
         M<-cor(matrix1)
-    
+
         corrplot(M, method="circle")
-        
+
       }else{
-        
+
         print("No hay correlacion")
-        
+
         return()
       }
    }
-      
+
   })
 
-  
-  
-  
+
+
+
 
 
 
