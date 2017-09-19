@@ -17,6 +17,7 @@ library(boot)
 myShinyServer <- function(input, output, session) {
 
 
+
   ##Función que valida si ya se seleccionó un archivo. Y si se seleccionó, entonce se lee.
   ##Esta función devuelve los datos "read_data()" si hay archivo seleccionado, sino return
   read_data <- reactive({
@@ -24,12 +25,9 @@ myShinyServer <- function(input, output, session) {
 
   if(is.null(input$file1)){
 
-      print("ARCHIVO NULL")
       return()
 
   }else{
-
-      print("Leyendo datos")
 
       file1<- input$file1
       read.table(file=file1$datapath, header=TRUE, sep=",", dec="." )
@@ -47,8 +45,6 @@ myShinyServer <- function(input, output, session) {
     ##Se valida si hay datos leidos.
 
     if(is.null(read_data())){
-      print("DATA ES NULLL")
-      h4("There is not loaded data.")
 
     }else{
 
@@ -64,16 +60,19 @@ myShinyServer <- function(input, output, session) {
         ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
         ##Si no está seleccinado, se sigue con el análisis normal
 
-        x<-myData[,input$listVar]
+
+        datos <<- myData[,input$listVar]
+
+        ##x<- myData[,input$listVar]
 
         ##2017-09-12: aplicación bootstrapping
-
-
         if (is.null(input$Boots)){
+
 
           ##Si no está activada la opción de boots no se hace nada.
 
         }else{
+
 
           ##De lo contrario, es porque el usuario quiere aplicar bootstrapping.
           ##Se valida sobre qué estadístico quiere aplicar muestreo el usuario
@@ -81,22 +80,23 @@ myShinyServer <- function(input, output, session) {
 
           if (input$Boots == "mean"){
 
-            call_boots <- boot(data=x,statistic=fun_mean, R=1000)
-            x<-call_boots$t
+            call_boots <- boot(data=datos,statistic=fun_mean, R=1000)
+            datos <<- call_boots$t
 
           }else if (input$Boots == "median"){
 
-              call_boots <- boot(data=x,statistic=fun_median, R=1000)
-              x<-call_boots$t
+              call_boots <- boot(data=datos,statistic=fun_median, R=1000)
+              datos <<- call_boots$t
+
           }else if (input$Boots == "desviation") {
 
-            call_boots <- boot(data=x,statistic=fun_sd, R=1000)
-            x<-call_boots$t
+            call_boots <- boot(data=datos,statistic=fun_sd, R=1000)
+            datos <<-call_boots$t
 
           }else if (input$Boots == "variance"){
 
-            call_boots <- boot(data=x,statistic=fun_var, R=1000)
-            x<-call_boots$t
+            call_boots <- boot(data=datos,statistic=fun_var, R=1000)
+            datos <<-call_boots$t
 
           }
 
@@ -106,17 +106,20 @@ myShinyServer <- function(input, output, session) {
 
 
         #Generar los bins:
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        bins <- seq(min(datos), max(datos), length.out = input$bins + 1)
 
 
         #Pintar histograma:
-        hist(x, main=input$listVar, breaks = bins, col = 'antiquewhite1', border = 'black', freq=FALSE)
+        hist(datos, main=input$listVar, breaks = bins, col = 'antiquewhite1', border = 'black', freq=FALSE)
+
 
         ##Se valida el Checkbock de Density, para pontar o no pintar la función de densidad.
         if(input$Density==TRUE){
-          density<-density(x)
+
+          density<-density(datos)
           lines(density, col = "red", lty=2, lwd = 3)
-        }
+
+          }
 
 
         ##Se valida si el Checkbox de Distribuciones está activo.
@@ -126,23 +129,32 @@ myShinyServer <- function(input, output, session) {
         ##NORMAL:
         }else if (input$Distribution == "norm"){
 
+
           ##Ajustar la variable a la distribución normal:
-          curve(dnorm(x, mean(x), sd(x)), col = "blue", lty=2, lwd = 2, add = TRUE)
+          x=datos
+          curve( dnorm(x, mean=mean(x), sd=sd(x)) , col = "blue", lty=2, lwd = 2, add = TRUE)
+
+          ##curve( dnorm(x, mean=10,sd=2), 5, 15, add=T, col="blue")
 
         ##UNIFORME:
         }else if (input$Distribution == "unif"){
 
           ##Ajustar la variable a la distribución uniforme:
+          x=datos
           curve(dunif(x,min=min(x), max=max(x),  log=FALSE), col="green",lty=2, lwd = 2,  add = TRUE)
 
         ##L-NORMAL:
         }else if (input$Distribution =="lnorm"){
 
           ##Ajustar la variable a la distribución LogNormal
+          x=datos
           curve(dlnorm(x, mean(x), sd(x)),col=25, lty=2, lwd = 2, add = TRUE )
 
         ##EXPONENCIAL:
         }else if (input$Distribution =="exp"){
+
+          ##Ajustar la variable a la distribución Exponencia
+          x=datos
           curve(dexp(x), col=30, add= TRUE, lty=2, lwd = 2)
 
         }
@@ -161,6 +173,7 @@ myShinyServer <- function(input, output, session) {
 
 
   ##FUNCIONALIDAD: MODA.
+  observeEvent(input$Boots,{
   output$median <-renderText({
 
     if(is.null(read_data())){
@@ -169,8 +182,11 @@ myShinyServer <- function(input, output, session) {
       myData<-read_data()
 
       if(is.numeric(myData[,input$listVar])){
-        x<-myData[,input$listVar]
-        median(x)
+        ##x<-myData[,input$listVar]
+        median(datos)
+
+
+
       }else{
         return()
       }
@@ -178,9 +194,35 @@ myShinyServer <- function(input, output, session) {
   }
   )
 
+  })
+
+  observeEvent(input$listVar,{
+    output$median <-renderText({
+
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+          ##x<-myData[,input$listVar]
+          median(datos)
+
+
+
+        }else{
+          return()
+        }
+      }
+    }
+    )
+
+  })
+
 
 
   ##FUNCIONALIDAD: Desviación Standar
+  observeEvent(input$Boots,{
   output$desv <-renderText({
     if(is.null(read_data())){
       return()
@@ -188,16 +230,43 @@ myShinyServer <- function(input, output, session) {
       myData<-read_data()
 
       if(is.numeric(myData[,input$listVar])){
-        x<-myData[,input$listVar]
-        sd(x)
+        ##x<-myData[,input$listVar]
+
+        sd(datos)
+
       }else{
         return()
       }
     }
   }
   )
+  })
+
+
+  observeEvent(input$listVar,{
+    output$desv <-renderText({
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+          ##x<-myData[,input$listVar]
+
+          sd(datos)
+
+        }else{
+          return()
+        }
+      }
+    }
+    )
+  })
+
+
 
   ##FUNCIONALIDAD: Varianza.
+  observeEvent(input$Boots,{
   output$var <-renderText({
     if(is.null(read_data())){
       return()
@@ -206,7 +275,7 @@ myShinyServer <- function(input, output, session) {
 
       if(is.numeric(myData[,input$listVar])){
         x<-myData[,input$listVar]
-        var(x)
+        var(datos)
       }else{
         return()
       }
@@ -214,10 +283,31 @@ myShinyServer <- function(input, output, session) {
     }
   }
   )
+  })
 
+
+  observeEvent(input$listVar,{
+    output$var <-renderText({
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+          x<-myData[,input$listVar]
+          var(datos)
+        }else{
+          return()
+        }
+
+      }
+    }
+    )
+  })
 
 
   #FUNCIONALIDAD: Kurtosis
+  observeEvent(input$Boots,{
   output$kurtosis <-renderText({
     if(is.null(read_data())){
       return()
@@ -226,7 +316,7 @@ myShinyServer <- function(input, output, session) {
 
       if(is.numeric(myData[,input$listVar])){
         x<-myData[,input$listVar]
-        kurtosis(x, na.rm = TRUE)
+        kurtosis(datos, na.rm = TRUE)
       }else{
         return()
 
@@ -234,8 +324,31 @@ myShinyServer <- function(input, output, session) {
     }
   }
   )
+  })
+
+  observeEvent(input$listVar,{
+    output$kurtosis <-renderText({
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+          x<-myData[,input$listVar]
+          kurtosis(datos, na.rm = TRUE)
+        }else{
+          return()
+
+        }
+      }
+    }
+    )
+  })
+
+
 
   ##FUNCIONALIDAD: Sesgo
+  observeEvent(input$Boots,{
   output$sesgo <-renderText({
     if(is.null(read_data())){
       return()
@@ -244,7 +357,7 @@ myShinyServer <- function(input, output, session) {
 
       if(is.numeric(myData[,input$listVar])){
         x<-myData[,input$listVar]
-        skewness(x, na.rm = TRUE)
+        skewness(datos, na.rm = TRUE)
       }else{
         return()
       }
@@ -252,8 +365,32 @@ myShinyServer <- function(input, output, session) {
     }
   }
   )
+  })
+
+  observeEvent(input$listVar,{
+    output$sesgo <-renderText({
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+          x<-myData[,input$listVar]
+          skewness(datos, na.rm = TRUE)
+        }else{
+          return()
+        }
+
+      }
+    }
+    )
+  })
+
+
 
   ##FUNCIONALIDAD: QUANTILES
+
+  observeEvent(input$Boots,{
   output$quantil <-renderText({
     if(is.null(read_data())){
       return()
@@ -262,7 +399,7 @@ myShinyServer <- function(input, output, session) {
 
       if(is.numeric(myData[,input$listVar])){
         x<-myData[,input$listVar]
-        quantile(x, input$quantile)
+        quantile(datos, input$quantile)
       }else{
         return()
       }
@@ -270,8 +407,31 @@ myShinyServer <- function(input, output, session) {
     }
   })
 
+  })
+
+  observeEvent(input$listVar,{
+    output$quantil <-renderText({
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+          x<-myData[,input$listVar]
+          quantile(datos, input$quantile)
+        }else{
+          return()
+        }
+
+      }
+    })
+
+  })
+
+
 
   ##FUNCIONALIDAD: Número de Observaciones
+  observeEvent(input$Boots,{
   output$records <-renderText({
     if(is.null(read_data())){
       return()
@@ -280,7 +440,8 @@ myShinyServer <- function(input, output, session) {
 
       if(is.numeric(myData[,input$listVar])){
         x<-myData[,input$listVar]
-        length(x)
+
+        length(datos)
       }else{
         return()
       }
@@ -288,8 +449,33 @@ myShinyServer <- function(input, output, session) {
   }
   )
 
+  })
+
+  observeEvent(input$listVar,{
+    output$records <-renderText({
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+          x<-myData[,input$listVar]
+
+          length(datos)
+        }else{
+          return()
+        }
+      }
+    }
+    )
+
+  })
+
+
 
   ##FUNCIONALIDAD: Generate a summary of the dataset ----
+
+  observeEvent(input$Boots,{
   output$summary <- renderPrint({
     if(is.null(read_data())){
       return()
@@ -298,14 +484,37 @@ myShinyServer <- function(input, output, session) {
 
       if(is.numeric(myData[,input$listVar])){
 
-
         x<-myData[,input$listVar]
-        summary(x)
+
+        summary(datos)
       }else{
         return()
       }
     }
   })
+
+  })
+
+  observeEvent(input$listVar,{
+    output$summary <- renderPrint({
+      if(is.null(read_data())){
+        return()
+      }else{
+        myData<-read_data()
+
+        if(is.numeric(myData[,input$listVar])){
+
+          x<-myData[,input$listVar]
+
+          summary(datos)
+        }else{
+          return()
+        }
+      }
+    })
+
+  })
+
 
 
   ##FUNCIONALIDAD: Para Ver una muestra de los datos entrados por parámetro
@@ -348,6 +557,7 @@ myShinyServer <- function(input, output, session) {
         )
 
 
+
    }
   })
 
@@ -363,7 +573,7 @@ myShinyServer <- function(input, output, session) {
       myData<-read_data()
 
       if(is.numeric(myData[,input$listVar]) & is.numeric(myData[,input$listvarCo]) ){
-        print("creando graph correlacion...")
+
 
         matrix1 = cbind(myData[,input$listVar], myData[,input$listvarCo])
 
@@ -375,7 +585,7 @@ myShinyServer <- function(input, output, session) {
 
       }else{
 
-        print("No hay correlacion")
+
 
         return()
       }

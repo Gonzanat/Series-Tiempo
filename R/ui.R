@@ -15,13 +15,15 @@ library(e1071)
 
 ##1. Declaración variables: Recibir lo del usuario final
 myData <- c()
+x<-c()
+
 ##data<-read.csv(file.choose(),header=TRUE, sep=",", dec=".")
 
 ##data<- read.csv('C:/Users/gonzanat/Desktop/Especialización Analítica/Toma de decisiones bajo incertidumbre/Entregas Semanales/Primera Semana/Supermarket Transactions .csv', header=TRUE, sep=",", dec="." );
 
 
 ##Asignar a variable global los datos leídos:
-myData <<-data
+##myData <<-data
 
 myFluidPage <- fluidPage(
 
@@ -39,18 +41,17 @@ myFluidPage <- fluidPage(
                 accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
       tags$hr(),
 
-
       ##Lista desplegable de variables que contiene el dataset, para que el usuario pueda seleccionar la que quiere analizar:
       selectInput("listVar", "Variables:",
                   choices=colnames(myData)),
-      
-      
+
+
       selectInput("listvarCo", "Variable for Correlation:",
                  choices=colnames(myData)),
-      
+
       tags$hr(),
-      
-      
+
+
 
 
       ##Barra para definir número de divisiones del histograma:
@@ -60,7 +61,7 @@ myFluidPage <- fluidPage(
                   max = 50,
                   value = 30),
       tags$hr(),
-    
+
 
 
       ##Control para recibir el valor del quantil que se quiere calcular:
@@ -68,7 +69,7 @@ myFluidPage <- fluidPage(
       tags$hr(),
 
       ##Control para recibir el número de observaciones que quiere visualizar el usuario:
-      numericInput("obs", "Observations:", value=10),
+      numericInput("obs", "Observations:", value=5),
 
 
       # Include clarifying text ----
@@ -90,9 +91,19 @@ myFluidPage <- fluidPage(
                          c("Normal" = "norm",
                            "Uniform" = "unif",
                            "Log-normal" = "lnorm",
-                           "Exponential" = "exp"))
+                           "Exponential" = "exp")),
+
+      ##2017-09-17Control para seleccionar el estadístico sobre el que se va a aplicr
+      ##bootstrapping
+      checkboxGroupInput("Boots", "Apply Bootstrapping:",
+                         c("Mean" = "mean",
+                           "Median" = "median",
+                           "Desviation" = "desviation",
+                           "Variance" = "variance"))
 
     ),
+
+
 
 
 
@@ -103,27 +114,30 @@ myFluidPage <- fluidPage(
       plotOutput("distPlot"), ##En el server las variables distPlot y displot2, se definen como de salida.
 
 
-      ##Mostrar otros estadísticos, cuando el checkbox de "Otros Datos Estadísticos esté activo":
-      conditionalPanel("input.Statistics==1",
+      conditionalPanel(
+        condition = "input.Statistics==1",
 
-                       wellPanel(
-                         ##Mostrar los estadísticos de los datos:
-                         h4("Summary"),
-                         verbatimTextOutput("summary"),
+      wellPanel(
+        ##Mostrar los estadísticos de los datos:
+        h4("Summary"),
+        verbatimTextOutput("summary"),
 
-                         ##Otros Stadísticos.
-                         h6("# Records:"),
-                         verbatimTextOutput("records"),
-                         h6("Standard Dev:"),
-                         verbatimTextOutput("desv"),
-                         h6("Variance:"),
-                         verbatimTextOutput("var"),
-                         h6("Kurtosis:"),
-                         verbatimTextOutput("kurtosis"),
-                         h6("Skewness:"),
-                         verbatimTextOutput("sesgo")
-                       )
+        ##Otros Stadísticos.
+        h6("# Records:"),
+        verbatimTextOutput("records"),
+        h6("Standard Dev:"),
+        verbatimTextOutput("desv"),
+        h6("Variance:"),
+        verbatimTextOutput("var"),
+        h6("Kurtosis:"),
+        verbatimTextOutput("kurtosis"),
+        h6("Skewness:"),
+        verbatimTextOutput("sesgo")
+      )
       ),
+
+
+
 
 
       #Mostrar quantil:
@@ -133,7 +147,7 @@ myFluidPage <- fluidPage(
       #Mostar los datos que entraron por parámetro.
       h4("Observations"),
       tableOutput("Data"),
-      
+
       #Mostrar la correlaciln entre las variables seleccionadas
       h4("Correlation:"),
       plotOutput("Correlation")
