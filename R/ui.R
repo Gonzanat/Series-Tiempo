@@ -165,28 +165,39 @@ myFluidPage <- fluidPage(
                         navbarMenu("Menu",
                                    tabPanel("Graph natural data",
 
-
+                                            ##Gráfica de los datos de la variable
+                                            ##Sin ninguna transforación en serie de tiempos.
                                             plotOutput("NaturalSerie")
 
 
-
-
-
                                    ),
 
-                                   tabPanel("Define Time Series",
+                                   tabPanel("Define",
 
                                             sidebarPanel(
                                               numericInput("Start_Year", "Start Year:", value=2001),
-                                              numericInput("Periods", "Periods", value=12),
-                                              helpText("Months: 12, Quarters:4")
-                                            )
+                                              numericInput("Periods", "Periods", value=1),
+                                              numericInput("Frequency", "Frequency", value=12)
+
+                                            ),
+
+
+
+                                             print("Entrando a definicion"),
+
+                                             textOutput("TS_data")
 
 
                                    ),
 
 
-                                   tabPanel("Print data Time Series"),
+                                   tabPanel("Print data Time Series",
+
+                                            plotOutput("Graph_TS")
+
+                                            ),
+
+
                                    tabPanel("Time Series Graph "),
 
                                    tabPanel("Compare periods"),

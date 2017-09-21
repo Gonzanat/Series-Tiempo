@@ -624,7 +624,7 @@ myShinyServer <- function(input, output, session) {
 
 
         #Pintar datos
-        plot(datos, main=input$listVar,  col = 'antiquewhite1', border = 'black', freq=FALSE)
+        plot(datos, main=input$listVar,  col = 'blue', border = 'black')
 
 
       }else{
@@ -641,7 +641,92 @@ myShinyServer <- function(input, output, session) {
   ##Fin
 
 
+##función para obtener los datos de la serie de tiempo
 
+  observeEvent(input$Start_Year, {
+    output$TS_data <- renderPrint({
+
+
+      ##Se valida si hay datos leidos.
+
+      if(is.null(read_data())){
+
+      }else{
+
+
+        ##---De aquí hacia abajo no se ha cambiado nada
+
+        myData<- read_data()
+
+        #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+        if(is.numeric(myData[,input$listVar])){
+
+          ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+          ##Si no está seleccinado, se sigue con el análisis normal
+
+
+           datos <<- myData[,input$listVar]
+
+
+           ##gas = scan('http://www.uam.es/joser.berrendero/datos/gas6677.dat')
+
+            print(fun_TS(datos,input$Start_Year,input$Periods,input$Frequency))
+
+        }
+      }
+
+
+  })
+  }
+  )
+
+
+##Pintar Serie de tiempos:
+
+  output$Graph_TS <- renderPlot({
+
+
+    ##Se valida si hay datos leidos.
+
+    if(is.null(read_data())){
+
+    }else{
+
+
+      ##---De aquí hacia abajo no se ha cambiado nada
+
+      myData<- read_data()
+
+      #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+      if(is.numeric(myData[,input$listVar])){
+
+        ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+        ##Si no está seleccinado, se sigue con el análisis normal
+
+
+        datos <<- myData[,input$listVar]
+
+        ##obtener la serie de tiempo
+        TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+        #Pintar datos
+        plot(TS, main=input$listVar,  col = 'green', border = 'black')
+
+
+      }else{
+
+
+        h4("Select variable is not Numeric.")
+
+      }
+
+    }
+
+  })
+
+  ##Fin
 
 
 

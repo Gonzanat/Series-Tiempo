@@ -61,3 +61,16 @@ fun_var<-function(data, indices){
   valor =var(muestra)
   return(valor)
 }
+
+
+##Función para formar la serie de tiempo con base a los datos.
+
+fun_TS <-function (data, start_year, period, freq){
+
+  TS = ts(data = data, start=c(start_year,period), frequency = freq)
+
+  print(TS)
+
+  return (TS)
+
+}
