@@ -110,35 +110,37 @@ myFluidPage <- fluidPage(
     # Panel para desplegar los resultados:
     mainPanel(
 
-      ##Mostrar el histograma:
-      plotOutput("distPlot"), ##En el server las variables distPlot y displot2, se definen como de salida.
 
-
-      conditionalPanel(
-        condition = "input.Statistics==1",
-
-      wellPanel(
-        ##Mostrar los estadísticos de los datos:
-        h4("Summary"),
-        verbatimTextOutput("summary"),
-
-        ##Otros Stadísticos.
-        h6("# Records:"),
-        verbatimTextOutput("records"),
-        h6("Standard Dev:"),
-        verbatimTextOutput("desv"),
-        h6("Variance:"),
-        verbatimTextOutput("var"),
-        h6("Kurtosis:"),
-        verbatimTextOutput("kurtosis"),
-        h6("Skewness:"),
-        verbatimTextOutput("sesgo")
-      )
-      ),
+      tabsetPanel(
+        tabPanel("Exploration",
 
 
 
+          ##Mostrar el histograma:
+          plotOutput("distPlot"), ##En el server las variables distPlot y displot2, se definen como de salida.
 
+
+          conditionalPanel(
+            condition = "input.Statistics==1",
+
+          wellPanel(
+            ##Mostrar los estadísticos de los datos:
+            h4("Summary"),
+            verbatimTextOutput("summary"),
+
+            ##Otros Stadísticos.
+            h6("# Records:"),
+            verbatimTextOutput("records"),
+            h6("Standard Dev:"),
+            verbatimTextOutput("desv"),
+            h6("Variance:"),
+            verbatimTextOutput("var"),
+            h6("Kurtosis:"),
+            verbatimTextOutput("kurtosis"),
+            h6("Skewness:"),
+            verbatimTextOutput("sesgo")
+          )
+        ),
 
       #Mostrar quantil:
       h4("Selected Quantil:"),
@@ -152,7 +154,66 @@ myFluidPage <- fluidPage(
       h4("Correlation:"),
       plotOutput("Correlation")
 
+    ),
+
+    ##Panel para Series de Tiempo
+
+    tabPanel("Time Series",
+
+             navbarPage("Play with Time Series",
+
+                        navbarMenu("Menu",
+                                   tabPanel("Graph natural data",
+
+
+                                            plotOutput("NaturalSerie")
+
+
+
+
+
+                                   ),
+
+                                   tabPanel("Define Time Series",
+
+                                            sidebarPanel(
+                                              numericInput("Start_Year", "Start Year:", value=2001),
+                                              numericInput("Periods", "Periods", value=12),
+                                              helpText("Months: 12, Quarters:4")
+                                            )
+
+
+                                   ),
+
+
+                                   tabPanel("Print data Time Series"),
+                                   tabPanel("Time Series Graph "),
+
+                                   tabPanel("Compare periods"),
+                                   tabPanel("Get unit time"),
+                                   tabPanel("Forecast Time Series"),
+                                   tabPanel("Graph Components"),
+
+                                   tabPanel("Trend Graph"),
+                                   tabPanel("Season Graph "),
+                                   tabPanel("Residual Graph "),
+                                   tabPanel("Get a stablish Series Time (Transform )"),
+
+                                   tabPanel("Auto variance"),
+                                   tabPanel("Auto Correlation")
+                                   )
+
+                       ## plot(gas)
+
+
+            )
     )
+
+    #tabPanel("Table", tableOutput("table"))
+
+  )
+
+  )
 
   )
 )

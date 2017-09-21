@@ -594,6 +594,53 @@ myShinyServer <- function(input, output, session) {
   })
 
 
+##Funciones de las SERIES DE TIEMPO:
+
+##Funcion para pintar la serie en su estado natural.
+
+  output$NaturalSerie <- renderPlot({
+
+
+    ##Se valida si hay datos leidos.
+
+    if(is.null(read_data())){
+
+    }else{
+
+
+      ##---De aquí hacia abajo no se ha cambiado nada
+
+      myData<- read_data()
+
+      #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+      if(is.numeric(myData[,input$listVar])){
+
+        ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+        ##Si no está seleccinado, se sigue con el análisis normal
+
+
+        datos <<- myData[,input$listVar]
+
+
+        #Pintar datos
+        plot(datos, main=input$listVar,  col = 'antiquewhite1', border = 'black', freq=FALSE)
+
+
+      }else{
+
+
+        h4("Select variable is not Numeric.")
+
+      }
+
+    }
+
+  })
+
+  ##Fin
+
+
 
 
 
