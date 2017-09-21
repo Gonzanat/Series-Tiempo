@@ -163,18 +163,20 @@ myFluidPage <- fluidPage(
              navbarPage("Play with Time Series",
 
                         navbarMenu("Menu",
-                                   tabPanel("Graph natural data",
+                                   tabPanel("Plot Original Data",
 
                                             ##Gráfica de los datos de la variable
                                             ##Sin ninguna transforación en serie de tiempos.
+                                            h4("Plot Original Data"),
                                             plotOutput("NaturalSerie")
 
 
                                    ),
 
-                                   tabPanel("Define",
+                                   tabPanel("Define Time Series",
 
                                             sidebarPanel(
+                                              h4("Define parameter for Time Series:"),
                                               numericInput("Start_Year", "Start Year:", value=2001),
                                               numericInput("Periods", "Periods", value=1),
                                               numericInput("Frequency", "Frequency", value=12)
@@ -182,36 +184,81 @@ myFluidPage <- fluidPage(
                                             ),
 
 
-
-                                             print("Entrando a definicion"),
-
                                              textOutput("TS_data")
 
 
                                    ),
 
 
-                                   tabPanel("Print data Time Series",
+                                   tabPanel("Plot Time Series",
 
+                                            h4("Plot Time Series"),
                                             plotOutput("Graph_TS")
 
                                             ),
 
 
-                                   tabPanel("Time Series Graph "),
+                                   tabPanel("BoxPlot to compare periods",
 
-                                   tabPanel("Compare periods"),
-                                   tabPanel("Get unit time"),
-                                   tabPanel("Forecast Time Series"),
-                                   tabPanel("Graph Components"),
+                                            h4("BoxPlot to compare periods"),
+                                            plotOutput("BoxPlot")
 
-                                   tabPanel("Trend Graph"),
-                                   tabPanel("Season Graph "),
-                                   tabPanel("Residual Graph "),
-                                   tabPanel("Get a stablish Series Time (Transform )"),
+                                            ),
 
-                                   tabPanel("Auto variance"),
-                                   tabPanel("Auto Correlation")
+
+                                   tabPanel("Plot TS Components",
+
+                                            h4("Plot Time Series Components"),
+                                            plotOutput("ComponentPlot")
+
+                                            ),
+
+
+                                   tabPanel("Trend Graph",
+
+                                            h4("Trend Graph"),
+                                            plotOutput("Plot_Trend")
+
+                                            ),
+
+
+                                   tabPanel("Season Graph ",
+
+                                            h4("Season Graph "),
+                                            plotOutput("Plot_seasonal")
+
+                                            ),
+                                   tabPanel("Residual Graph ",
+
+                                            h4("Residual Graph "),
+                                            plotOutput("Plot_Residual")
+
+                                            ),
+
+
+                                   tabPanel("Forecast Time Series",
+
+                                            h4("Forecast Time Series")
+
+                                            ),
+
+                                   tabPanel("Get a stablish Series Time",
+
+                                            h4("Get a stablish Series Time")
+
+                                            ),
+
+                                   tabPanel("Autovariance",
+
+
+                                            h4("Autovariance")
+
+                                            ),
+                                   tabPanel("AutoCorrelation",
+
+                                            h4("AutoCorrelation")
+
+                                            )
                                    )
 
                        ## plot(gas)

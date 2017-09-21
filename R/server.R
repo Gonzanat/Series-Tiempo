@@ -641,7 +641,9 @@ myShinyServer <- function(input, output, session) {
   ##Fin
 
 
-##función para obtener los datos de la serie de tiempo
+  ##----------------------------SERIES DE TIEMPO---------------------------------
+
+##1.  función para obtener los datos de la serie de tiempo
 
   observeEvent(input$Start_Year, {
     output$TS_data <- renderPrint({
@@ -682,7 +684,7 @@ myShinyServer <- function(input, output, session) {
   )
 
 
-##Pintar Serie de tiempos:
+##2.  Pintar Serie de tiempos:
 
   output$Graph_TS <- renderPlot({
 
@@ -730,8 +732,286 @@ myShinyServer <- function(input, output, session) {
 
 
 
+##3.  BoxPlot para comparar periodos
+
+observeEvent(input$Frequency, {
+ output$BoxPlot <- renderPlot({
 
 
-}
+    ##Se valida si hay datos leidos.
+
+    if(is.null(read_data())){
+
+    }else{
+
+
+      ##---De aquí hacia abajo no se ha cambiado nada
+
+      myData<- read_data()
+
+      #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+      if(is.numeric(myData[,input$listVar])){
+
+        ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+        ##Si no está seleccinado, se sigue con el análisis normal
+
+
+        datos <<- myData[,input$listVar]
+
+        ##obtener la serie de tiempo
+        TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+        print(input$Start_Year)
+        print(input$Periods)
+        print(input$Frequency)
+
+        ##Pinte gráfico boxplot
+        boxplot(TS~ cycle(TS),
+                medcol=c("#FFDB00FF", "#B6FF00FF"),
+                whiskcol=c("#49FF00FF", "#00FF24FF"),
+                staplecol=c("#00FF92FF", "#00FFFFFF"),
+                boxcol=c("#0092FFFF", "#0024FFFF"),
+                outcol=c("#4900FFFF", "#B600FFFF"),
+                outbg=c("#FF00DB66", "#FF006D66")
+        )
+
+
+      }else{
+
+
+        h4("Select variable is not Numeric.")
+
+      }
+
+    }
+
+  })
+
+})
+
+  ##Fin
+
+
+ ##4.  Gráfica de componentes de la Serie de tiempo:
+
+ observeEvent(input$Frequency, {
+   output$ComponentPlot <- renderPlot({
+
+
+     ##Se valida si hay datos leidos.
+
+     if(is.null(read_data())){
+
+     }else{
+
+
+       ##---De aquí hacia abajo no se ha cambiado nada
+
+       myData<- read_data()
+
+       #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+       if(is.numeric(myData[,input$listVar])){
+
+         ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+         ##Si no está seleccinado, se sigue con el análisis normal
+
+
+         datos <<- myData[,input$listVar]
+
+         ##obtener la serie de tiempo
+         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+         #Optener componentes:
+         TS_COMP=decompose(TS )
+
+
+         ##Pintar gráfico:
+         plot(TS_COMP,  col = 'green', border = 'black')
+
+
+       }else{
+
+
+         h4("Select variable is not Numeric.")
+
+       }
+
+     }
+
+   })
+
+ }
+ )
+   ##Fin
+
+
+
+ ##5.  Gráfica de Tendencia (TREND)
+
+ observeEvent(input$Frequency, {
+   output$Plot_Trend <- renderPlot({
+
+
+     ##Se valida si hay datos leidos.
+
+     if(is.null(read_data())){
+
+     }else{
+
+
+       ##---De aquí hacia abajo no se ha cambiado nada
+
+       myData<- read_data()
+
+       #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+       if(is.numeric(myData[,input$listVar])){
+
+         ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+         ##Si no está seleccinado, se sigue con el análisis normal
+
+
+         datos <<- myData[,input$listVar]
+
+         ##obtener la serie de tiempo
+         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+         #Optener componentes:
+         TS_COMP=decompose(TS)
+
+         ##Pintar gráfico de tendencia:
+         plot(TS_COMP$trend,  col = 'blue', border = 'black')
+
+
+       }else{
+
+
+         h4("Select variable is not Numeric.")
+
+       }
+
+     }
+
+   })
+
+ }
+ )
+ ##Fin
+
+
+
+ ##6.  Gráfica de ESTACIONALIDAD (SEASON)
+
+ observeEvent(input$Frequency, {
+   output$Plot_seasonal <- renderPlot({
+
+
+     ##Se valida si hay datos leidos.
+
+     if(is.null(read_data())){
+
+     }else{
+
+
+       ##---De aquí hacia abajo no se ha cambiado nada
+
+       myData<- read_data()
+
+       #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+       if(is.numeric(myData[,input$listVar])){
+
+         ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+         ##Si no está seleccinado, se sigue con el análisis normal
+
+
+         datos <<- myData[,input$listVar]
+
+         ##obtener la serie de tiempo
+         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+         #Optener componentes:
+         TS_COMP=decompose(TS )
+
+         ##Pintar gráfico de tendencia:
+         plot(TS_COMP$seasonal,  col = 'blue', border = 'black')
+
+
+       }else{
+
+
+         h4("Select variable is not Numeric.")
+
+       }
+
+     }
+
+   })
+
+ }
+ )
+ ##Fin
+
+
+
+ ##7.  Gráfica de RESIDUOS (CAMBIOS DE LA SERIE IMPREDECIBLES)
+
+ observeEvent(input$Frequency, {
+   output$Plot_Residual <- renderPlot({
+
+
+     ##Se valida si hay datos leidos.
+
+     if(is.null(read_data())){
+
+     }else{
+
+
+       ##---De aquí hacia abajo no se ha cambiado nada
+
+       myData<- read_data()
+
+       #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+       if(is.numeric(myData[,input$listVar])){
+
+         ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+         ##Si no está seleccinado, se sigue con el análisis normal
+
+
+         datos <<- myData[,input$listVar]
+
+         ##obtener la serie de tiempo
+         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+         #Optener componentes:
+         TS_COMP=decompose(TS )
+
+         ##Pintar gráfico de tendencia:
+         plot(TS_COMP$random,  col = 'blue', border = 'black')
+
+
+       }else{
+
+
+         h4("Select variable is not Numeric.")
+
+       }
+
+     }
+
+   })
+
+ }
+ )
+ ##Fin
+
+
+
+
+
+ }
 
 
