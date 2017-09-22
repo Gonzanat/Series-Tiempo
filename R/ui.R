@@ -261,13 +261,18 @@ myFluidPage <- fluidPage(
                                             )
                                    )
 
-                       ## plot(gas)
+
+  ##Temas pendientes:
+  ##1. Pronóstico/forecast de seri de tiempo
+  ##2. ACF
+  ##3. PACF
+  ##4. Tendencias: Cuadrada, cúbica, ninguna
 
 
             )
     )
 
-    #tabPanel("Table", tableOutput("table"))
+
 
   )
 
