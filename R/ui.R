@@ -198,6 +198,62 @@ myFluidPage <- fluidPage(
                                             ),
 
 
+                                    tabPanel("Time Series Adjustment",
+
+                                            h4("Time Series Adjustment"),
+                                            checkboxInput("Lineal", "Linear Regression", FALSE),
+                                            checkboxInput("Quadratic", "Quadratic Regresion", FALSE),
+                                            checkboxInput("Cubic", "Cubic Regresion", FALSE),
+                                            checkboxInput("Exponential", "Exponential", FALSE),
+                                            checkboxInput("logarithmic", "Logarithmic", FALSE),
+
+
+                                            ##Aqui quede el 2017-09-23: aqui quede a l7:58.
+
+                                            ##FUNCIONES PARA AJUSTAR LA SERIE A UN MODELO:
+                                            h4("Time Series Adjustment: Lineal"),
+                                            plotOutput("Plot_Lineal"),
+                                            h5("SSE:"),
+                                            textOutput("Error2_Lin"),
+
+                                            tags$hr(),tags$hr(),
+
+                                            h4("Time Series Adjustment: Quadratic"),
+                                            plotOutput("Plot_Cuadratica"),
+                                            h5("SSE:"),
+                                            textOutput("Error2_Cua"),
+
+                                            tags$hr(),tags$hr(),
+
+                                            h4("Time Series Adjustment: Cubic"),
+                                            plotOutput("Plot_Cubica"),
+                                            h5("SSE:"),
+                                            textOutput("Error2_Cub"),
+
+                                            tags$hr(),tags$hr(),
+
+                                            h4("Time Series Adjustment: Exponential"),
+                                            plotOutput("Plot_Exponential"),
+                                            h5("SSE:"),
+                                            textOutput("Error2_Exp"),
+
+                                            tags$hr(),tags$hr(),
+
+
+                                            h4("Time Series Adjustment: Logarithmic"),
+                                            plotOutput("Plot_Log"),
+                                            h5("SSE:"),
+                                            textOutput("Error2_Log"),
+
+                                            tags$hr(),tags$hr()
+
+
+
+
+
+                                   ),
+
+
                                    tabPanel("BoxPlot to compare periods",
 
                                             h4("BoxPlot to compare periods"),

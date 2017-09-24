@@ -1010,8 +1010,503 @@ observeEvent(input$Frequency, {
 
 
 
+ ##2017-09-24: Funciones para ajustar la Serie de tiempo a un modelo: Reg Lineal, Cuadrático, Cubico, Expo
 
+
+ ##AJUSTE: Regresión Lineal
+ observeEvent(input$Lineal, {
+   output$Plot_Lineal <- renderPlot({
+
+
+     if(input$Lineal ==TRUE){
+
+      ##Se valida si hay datos leidos.
+
+      if(is.null(read_data())){
+
+      }else{
+
+
+        ##---De aquí hacia abajo no se ha cambiado nada
+
+        myData<- read_data()
+
+        #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+        if(is.numeric(myData[,input$listVar])){
+
+          ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+          ##Si no está seleccinado, se sigue con el análisis normal
+
+
+          datos <<- myData[,input$listVar]
+
+          n=length(datos)
+          n<-seq(1:n)
+
+          serie<-cbind(n,datos)
+
+          colnames(serie)<- c("t", "y")
+          serie<-data.frame(serie) ##convirtiendo el vector en df para que pueda ser leido por la función de regresión
+
+
+          ##Aplicando regresión lineal para identificar si la Tendencia de la serie
+          ##se ajusta a una regresión Lineal
+          regresion<-lm(data = serie, y~t)
+
+          summary(regresion)
+
+          ##Cálculo de la y ajustad o teórica. Especie de predicción con el modelo ajustado.
+          Y_teor<-regresion$fitted.values
+
+          v_Error2_lin<<-sum( (serie$y-Y_teor)^2 )
+
+
+          ##Gráfica de serie vs. Gráfica de ajuste de regresión"
+          plot(serie$t, serie$y,  t='l')
+          abline(regresion, col="orange")
+
+
+        }else{
+
+
+          h4("Select variable is not Numeric.")
+
+       }
+
+      }
+     }
+
+   })
 
  }
+ )
+ ##Fin
+
+
+
+ ##AJUSTE: Regresión Cuadrática
+
+ observeEvent(input$Quadratic, {
+   output$Plot_Cuadratica <- renderPlot({
+
+
+     if(input$Quadratic ==TRUE){
+
+       ##Se valida si hay datos leidos.
+
+
+
+       if(is.null(read_data())){
+
+       }else{
+
+
+         ##---De aquí hacia abajo no se ha cambiado nada
+
+         myData<- read_data()
+
+         #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+         if(is.numeric(myData[,input$listVar])){
+
+           ##Septiembre 17 de 2017: Se valida si boostrapping está seleccionado
+           ##Si no está seleccinado, se sigue con el análisis normal
+
+
+           datos <<- myData[,input$listVar]
+
+           n=length(datos)
+           n<-seq(1:n)
+
+           serie<-cbind(n,datos)
+
+           colnames(serie)<- c("t", "y")
+           serie<-data.frame(serie) ##convirtiendo el vector en df para que pueda ser leido por la función de regresión
+
+
+           regresion_cuadra<-lm(data = serie, y~t + I(t^2))
+           summary(regresion_cuadra)
+
+
+           Y_teor<-regresion_cuadra$fitted.values
+
+           v_Error2_cua<<-sum( (serie$y-Y_teor)^2 )
+
+           plot(serie$t, serie$y,  t='l')
+           curve(regresion_cuadra$coefficient[1]+regresion_cuadra$coefficient[2]*x+regresion_cuadra$coefficient[3]*x^2,add=T,col="orange")
+
+
+         }else{
+
+
+           h4("Select variable is not Numeric.")
+
+         }
+
+       }
+     }
+
+   })
+
+ }
+ )
+ ##Fin
+
+
+
+ ##AJUSTE: Regresión Cubica
+
+ observeEvent(input$Cubic, {
+   output$Plot_Cubica <- renderPlot({
+
+
+     if(input$Cubic ==TRUE){
+
+       ##Se valida si hay datos leidos.
+
+       if(is.null(read_data())){
+
+       }else{
+
+
+         ##---De aquí hacia abajo no se ha cambiado nada
+
+         myData<- read_data()
+
+         #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+         if(is.numeric(myData[,input$listVar])){
+
+
+           datos <<- myData[,input$listVar]
+
+           n=length(datos)
+           n<-seq(1:n)
+
+           serie<-cbind(n,datos)
+
+           colnames(serie)<- c("t", "y")
+           serie<-data.frame(serie) ##convirtiendo el vector en df para que pueda ser leido por la función de regresión
+
+
+           reg_cubica<-lm(data = serie, y~t+I(t^2)+I(t^3))
+           summary(reg_cubica)
+
+           Y_teor<-reg_cubica$fitted.values
+
+
+           v_Error2_cub<<-sum( (serie$y-Y_teor)^2 )
+
+
+           plot(serie$t, serie$y,  t='l')
+           curve(reg_cubica$coefficient[1]+reg_cubica$coefficient[2]*x+reg_cubica$coefficient[3]*x^2,add=T,col="orange")
+
+
+         }else{
+
+
+           h4("Select variable is not Numeric.")
+
+         }
+
+       }
+     }
+
+   })
+
+ }
+ )
+ ##Fin
+
+
+
+
+ ##AJUSTE: Regresión Exponencial
+
+ observeEvent(input$Exponential, {
+   output$Plot_Exponential<- renderPlot({
+
+
+     if(input$Exponential ==TRUE){
+
+       ##Se valida si hay datos leidos.
+
+       if(is.null(read_data())){
+
+       }else{
+
+
+         ##---De aquí hacia abajo no se ha cambiado nada
+
+         myData<- read_data()
+
+         #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+         if(is.numeric(myData[,input$listVar])){
+
+
+           datos <<- myData[,input$listVar]
+
+           n=length(datos)
+           n<-seq(1:n)
+
+           serie<-cbind(n,datos)
+
+           colnames(serie)<- c("t", "y")
+           serie<-data.frame(serie) ##convirtiendo el vector en df para que pueda ser leido por la función de regresión
+
+           y_tras<-log(serie$y) ##Transponer y con la función log.
+
+           reg_exp<-lm(y_tras~t,data=serie)
+           summary(reg_exp)
+
+           Y_teor<-reg_exp$fitted.values
+
+           v_Error2_exp<<-sum( (serie$y-Y_teor)^2 )
+
+           #plot(datos$X,datos$H_1,xlab='X(m)',ylab='H_1(%)',main='Ajuste exponencial')
+           plot(serie$t, serie$y,  t='l')
+           curve(exp(reg_exp$coefficient[1])*exp(reg_exp$coefficient[2]*x),add=T,col="orange")
+
+
+         }else{
+
+
+           h4("Select variable is not Numeric.")
+
+         }
+
+       }
+     }
+
+   })
+
+ }
+ )
+ ##Fin
+
+
+
+ ##AJUSTE: Regresión Exponencial
+
+ observeEvent(input$logarithmic, {
+   output$Plot_Log<- renderPlot({
+
+
+     if(input$logarithmic ==TRUE){
+
+       ##Se valida si hay datos leidos.
+
+       if(is.null(read_data())){
+
+       }else{
+
+
+         ##---De aquí hacia abajo no se ha cambiado nada
+
+         myData<- read_data()
+
+         #Selección de la columna que contiene la variable de análisis seleccionada por el usuario.
+
+         if(is.numeric(myData[,input$listVar])){
+
+
+           datos <<- myData[,input$listVar]
+
+           n=length(datos)
+           n<-seq(1:n)
+
+           serie<-cbind(n,datos)
+
+           colnames(serie)<- c("t", "y")
+           serie<-data.frame(serie) ##convirtiendo el vector en df para que pueda ser leido por la función de regresión
+
+           t_tras<-log(serie$t) ##En un ajuste logarítimo, transpongo la variable dependiente
+
+           reg_log<-lm(y~t_tras,data=serie)
+           summary(reg_log)
+
+           Y_teor<-reg_exp$fitted.values
+
+           v_Error2_log<<-sum( (serie$y-Y_teor)^2 )
+
+
+           #plot(datos$X,datos$H_1,xlab='X(m)',ylab='H_1(%)',main='Ajuste exponencial')
+           plot(serie$t, serie$y,  t='l')
+           curve(reg_log$coefficient[1]+reg_log$coefficient[2]*log(x),add=T,col="orange")
+
+
+         }else{
+
+
+           h4("Select variable is not Numeric.")
+
+         }
+
+       }
+     }
+
+   })
+
+ }
+ )
+ ##Fin
+
+ ##FUNCIONES PARA OBTENER EL ERROR CUADRÁTICO DE LOS AJUSTES.
+
+ ##Función que entrega el Error cuadrado del Ajuste Linea
+ observeEvent(input$Lineal,{
+   output$Error2_Lin <-renderText({
+     if(is.null(read_data())){
+       return()
+     }else{
+       myData<-read_data()
+
+       if(is.numeric(myData[,input$listVar])){
+
+         if(input$Lineal==TRUE){
+
+           v_Error2_lin
+
+         }else{
+
+           v_Error2_lin=NULL
+
+         }
+       }else{
+         return()
+       }
+     }
+   }
+   )
+ })
+
+
+
+
+
+
+
+ ##Función que entrega el Error cuadrado del Ajuste Cuadrática
+ observeEvent(input$Quadratic,{
+   output$Error2_Cua <-renderText({
+     if(is.null(read_data())){
+       return()
+     }else{
+       myData<-read_data()
+
+       if(is.numeric(myData[,input$listVar])){
+
+         if(input$Quadratic==TRUE){
+
+           v_Error2_cua
+
+         }else{
+
+           v_Error2_cua=NULL
+
+         }
+       }else{
+         return()
+       }
+     }
+   }
+   )
+ })
+
+
+
+ ##Función que entrega el Error cuadrado del Ajuste Cubica
+ observeEvent(input$Cubic,{
+   output$Error2_Cub <-renderText({
+     if(is.null(read_data())){
+       return()
+     }else{
+       myData<-read_data()
+
+       if(is.numeric(myData[,input$listVar])){
+
+         if(input$Cubic==TRUE){
+
+           v_Error2_cub
+
+         }else{
+
+           v_Error2_cub=NULL
+
+         }
+       }else{
+         return()
+       }
+     }
+   }
+   )
+ })
+
+
+
+
+ ##Función que entrega el Error cuadrado del Ajuste Exponencia
+ observeEvent(input$Exponential,{
+   output$Error2_Exp <-renderText({
+     if(is.null(read_data())){
+       return()
+     }else{
+       myData<-read_data()
+
+       if(is.numeric(myData[,input$listVar])){
+
+         if(input$Exponential==TRUE){
+
+           v_Error2_exp
+
+         }else{
+
+           v_Error2_exp=NULL
+
+         }
+       }else{
+         return()
+       }
+     }
+   }
+   )
+ })
+
+
+
+ ##Función que entrega el Error cuadrado del Ajuste Log
+ observeEvent(input$logarithmic,{
+   output$Error2_Log <-renderText({
+     if(is.null(read_data())){
+       return()
+     }else{
+       myData<-read_data()
+
+       if(is.numeric(myData[,input$listVar])){
+
+         if(input$logarithmic==TRUE){
+
+           v_Error2_log
+
+         }else{
+
+           v_Error2_log=NULL
+
+         }
+       }else{
+         return()
+       }
+     }
+   }
+   )
+ })
+
+
+
+
+}
+
 
 

@@ -5,6 +5,12 @@ library(corrplot)
 
 ##Variables globales
 assign("datos", 0, .GlobalEnv)
+assign("v_Error2_lin", 0, .GlobalEnv)
+assign("v_Error2_cua", 0, .GlobalEnv)
+assign("v_Error2_cub", 0, .GlobalEnv)
+assign("v_Error2_exp", 0, .GlobalEnv)
+assign("v_Error2_log", 0, .GlobalEnv)
+
 
 
 Playing_with_your_data <- function()
