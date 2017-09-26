@@ -264,6 +264,12 @@ myFluidPage <- fluidPage(
 
                                    tabPanel("Plot TS Components",
 
+
+                                            radioButtons("Tipo_estacionalidad", label = h6("Seasonal Type"),
+                                                         choices = list("Additive" = 1, "Multiplicative" = 2),
+                                                         selected = 1),
+
+
                                             h4("Plot Time Series Components"),
                                             plotOutput("ComponentPlot")
 
@@ -294,7 +300,18 @@ myFluidPage <- fluidPage(
 
                                    tabPanel("Forecast Time Series",
 
-                                            h4("Forecast Time Series")
+                                            h4("Forecast Time Series"),
+
+                                            radioButtons("Forecast_Type", label = h6("Forecast Type"),
+                                                         choices = list("Arima" = 1, "HolTwinter" = 2),
+                                                         selected = 1),
+
+
+                                             numericInput("Per_forecast", "Total Periods to predict:", value=12),
+
+                                             ##Gráfica de Forecast, de acuerdo a la selección del anterior radiobutton:
+                                             plotOutput('Forecast_TS')
+
 
                                             ),
 

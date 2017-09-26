@@ -10,6 +10,7 @@ library(shiny)
 library(e1071)
 library(corrplot)
 library(boot)
+library(forecast)
 
 
 ##3. Definición de la parte lógica:
@@ -686,7 +687,7 @@ myShinyServer <- function(input, output, session) {
 
 ##2.  Pintar Serie de tiempos:
 
-  output$Graph_TS <- renderPlot({
+output$Graph_TS <- renderPlot({
 
 
     ##Se valida si hay datos leidos.
@@ -714,7 +715,7 @@ myShinyServer <- function(input, output, session) {
         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
 
         #Pintar datos
-        plot(TS, main=input$listVar,  col = 'green', border = 'black')
+        plot(TS, main=input$listVar, border = 'black')
 
 
       }else{
@@ -824,11 +825,18 @@ observeEvent(input$Frequency, {
          TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
 
          #Optener componentes:
-         TS_COMP=decompose(TS )
+
+         if(input$Tipo_estacionalidad==1){
+            print("additive")
+            TS_COMP=decompose(TS, type = "additive")
+         }else{
+            print("multiplicative")
+            TS_COMP=decompose(TS, type = "multiplicative")
+         }
 
 
          ##Pintar gráfico:
-         plot(TS_COMP,  col = 'green', border = 'black')
+         plot(TS_COMP,  col = 'black', border = 'black')
 
 
        }else{
@@ -1327,7 +1335,7 @@ observeEvent(input$Frequency, {
            reg_log<-lm(y~t_tras,data=serie)
            summary(reg_log)
 
-           Y_teor<-reg_exp$fitted.values
+           Y_teor<-reg_log$fitted.values
 
            v_Error2_log<<-sum( (serie$y-Y_teor)^2 )
 
@@ -1504,9 +1512,81 @@ observeEvent(input$Frequency, {
  })
 
 
+ ##FUNCIONES DE PRONÓSTICO/FORECAST
+
+
+observeEvent(input$Forecast_Type,{
+output$Forecast_TS <- renderPlot({
+
+     if(is.null(read_data())){
+
+     }else{
+
+       myData<- read_data()
+
+       if(is.numeric(myData[,input$listVar])){
+
+         datos <<- myData[,input$listVar]
+
+         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+         Periods = input$Per_forecast
+         print(Periods)
+
+         ##Pronóstico de la serie de tiempos por ARIMA
+         if (input$Forecast_Type==1){
+
+           fit= Arima(TS, order = c(1,1,1))
+
+           ##Predicción: Asignar los periodos
+           forecast = forecast(fit,h=Periods)
+
+           plot(forecast, col='blue')
+           lines(fit$fitted, col='red')
+
+         }else{
+
+           ## Método: HOLTWINTER
+           if (input$Forecast_Type==2){
+
+            fit<-HoltWinters(TS)
+
+            ##Prediccion
+            forecast <- predict(fit, n.ahead = Periods, prediction.interval = T, level = 0.95)
+            plot(fit, forecast)
+
+           }else{
+
+
+            }
+
+
+
+
+
+         }
+
+
+       }else{
+
+
+         h4("Select variable is not Numeric.")
+
+       }
+
+     }
+
+
+})
+})
+
+ ##Fin
+
 
 
 }
+
+
 
 
 
