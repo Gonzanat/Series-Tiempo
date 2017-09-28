@@ -1,9 +1,3 @@
-library(shiny)
-library(e1071)
-library(boot)
-library(corrplot)
-library(forecast)
-
 ##Variables globales
 assign("datos", 0, .GlobalEnv)
 assign("v_Error2_lin", 0, .GlobalEnv)
@@ -16,6 +10,12 @@ assign("v_Error2_log", 0, .GlobalEnv)
 
 Playing_with_your_data <- function()
 {
+
+  library(shiny)
+  library(e1071)
+  library(boot)
+  library(corrplot)
+  library(forecast)
 
 
 

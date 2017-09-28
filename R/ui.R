@@ -12,6 +12,9 @@
 
 library(shiny)
 library(e1071)
+library(boot)
+library(corrplot)
+library(forecast)
 
 ##1. Declaración variables: Recibir lo del usuario final
 myData <- c()

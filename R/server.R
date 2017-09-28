@@ -8,8 +8,8 @@
 #
 library(shiny)
 library(e1071)
-library(corrplot)
 library(boot)
+library(corrplot)
 library(forecast)
 
 
@@ -674,7 +674,6 @@ myShinyServer <- function(input, output, session) {
            TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
 
            print(TS)
-           ##gas = scan('http://www.uam.es/joser.berrendero/datos/gas6677.dat')
         }
       }
 
