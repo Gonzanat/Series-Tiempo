@@ -111,7 +111,7 @@ myShinyServer <- function(input, output, session) {
 
 
         #Pintar histograma:
-        hist(datos, main=input$listVar, breaks = bins, col = 'antiquewhite1', border = 'black', freq=FALSE)
+        hist(datos, main=input$listVar, breaks = bins, col = 'antiquewhite1',  freq=FALSE)
 
 
         ##Se valida el Checkbock de Density, para pontar o no pintar la función de densidad.
@@ -625,7 +625,7 @@ myShinyServer <- function(input, output, session) {
 
 
         #Pintar datos
-        plot(datos, main=input$listVar,  col = 'blue', border = 'black')
+        plot(datos, main=input$listVar,  col = 'blue')
 
 
       }else{
@@ -671,11 +671,10 @@ myShinyServer <- function(input, output, session) {
 
            datos <<- myData[,input$listVar]
 
+           TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
 
+           print(TS)
            ##gas = scan('http://www.uam.es/joser.berrendero/datos/gas6677.dat')
-
-            print(fun_TS(datos,input$Start_Year,input$Periods,input$Frequency))
-
         }
       }
 
@@ -715,7 +714,7 @@ output$Graph_TS <- renderPlot({
         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
 
         #Pintar datos
-        plot(TS, main=input$listVar, border = 'black')
+        plot(TS, main=input$listVar)
 
 
       }else{
@@ -763,9 +762,6 @@ observeEvent(input$Frequency, {
         ##obtener la serie de tiempo
         TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
 
-        print(input$Start_Year)
-        print(input$Periods)
-        print(input$Frequency)
 
         ##Pinte gráfico boxplot
         boxplot(TS~ cycle(TS),
@@ -827,16 +823,16 @@ observeEvent(input$Frequency, {
          #Optener componentes:
 
          if(input$Tipo_estacionalidad==1){
-            print("additive")
+
             TS_COMP=decompose(TS, type = "additive")
          }else{
-            print("multiplicative")
+
             TS_COMP=decompose(TS, type = "multiplicative")
          }
 
 
          ##Pintar gráfico:
-         plot(TS_COMP,  col = 'black', border = 'black')
+         plot(TS_COMP,  col = 'black')
 
 
        }else{
@@ -890,7 +886,7 @@ observeEvent(input$Frequency, {
          TS_COMP=decompose(TS)
 
          ##Pintar gráfico de tendencia:
-         plot(TS_COMP$trend,  col = 'blue', border = 'black')
+         plot(TS_COMP$trend,  col = 'blue')
 
 
        }else{
@@ -944,7 +940,7 @@ observeEvent(input$Frequency, {
          TS_COMP=decompose(TS )
 
          ##Pintar gráfico de tendencia:
-         plot(TS_COMP$seasonal,  col = 'blue', border = 'black')
+         plot(TS_COMP$seasonal,  col = 'blue')
 
 
        }else{
@@ -998,7 +994,7 @@ observeEvent(input$Frequency, {
          TS_COMP=decompose(TS )
 
          ##Pintar gráfico de tendencia:
-         plot(TS_COMP$random,  col = 'blue', border = 'black')
+         plot(TS_COMP$random,  col = 'blue')
 
 
        }else{
@@ -1531,7 +1527,7 @@ output$Forecast_TS <- renderPlot({
          TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
 
          Periods = input$Per_forecast
-         print(Periods)
+
 
          ##Pronóstico de la serie de tiempos por ARIMA
          if (input$Forecast_Type==1){
@@ -1583,6 +1579,109 @@ output$Forecast_TS <- renderPlot({
  ##Fin
 
 
+##GRAFICA de AUTO-CORRELACIÓN:
+
+##ACF:
+
+observeEvent(input$Apply_diff,{
+  output$Autocorrelation_acf <- renderPlot({
+
+    if(is.null(read_data())){
+
+    }else{
+
+      myData<- read_data()
+
+      if(is.numeric(myData[,input$listVar])){
+
+        datos <<- myData[,input$listVar]
+
+        TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+
+        ##Validar si la función de aplicación de diferenciación está activo
+        if (input$Apply_diff==1){
+
+          TS_diff<- diff(TS)
+
+          plot(Acf(TS_diff))
+
+
+        }else{
+
+          plot(Acf(TS))
+
+        }
+
+
+
+
+      }else{
+
+
+        h4("Select variable is not Numeric.")
+
+      }
+
+    }
+
+
+  })
+})
+
+##Fin
+
+##Pacf
+
+
+
+observeEvent(input$Apply_diff,{
+  output$Autocorrelation_Pacf <- renderPlot({
+
+    if(is.null(read_data())){
+
+    }else{
+
+      myData<- read_data()
+
+      if(is.numeric(myData[,input$listVar])){
+
+        datos <<- myData[,input$listVar]
+
+        TS= fun_TS(datos,input$Start_Year,input$Periods,input$Frequency)
+
+
+        ##Validar si la función de aplicación de diferenciación está activo
+        if (input$Apply_diff==1){
+
+          TS_diff<- diff(TS)
+
+          plot(pacf(TS_diff))
+
+
+        }else{
+
+          plot(pacf(TS))
+
+        }
+
+
+
+
+      }else{
+
+
+        h4("Select variable is not Numeric.")
+
+      }
+
+    }
+
+
+  })
+})
+
+##Fin
 
 }
 

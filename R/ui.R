@@ -298,6 +298,20 @@ myFluidPage <- fluidPage(
                                             ),
 
 
+                                   tabPanel("AutoCorrelation",
+
+                                            h4("AutoCorrelation"),
+
+                                            checkboxInput("Apply_diff", "Apply TS Diff", 0),
+
+                                            plotOutput('Autocorrelation_acf'),
+                                            plotOutput('Autocorrelation_Pacf')
+
+
+
+                                   ),
+
+
                                    tabPanel("Forecast Time Series",
 
                                             h4("Forecast Time Series"),
@@ -313,25 +327,8 @@ myFluidPage <- fluidPage(
                                              plotOutput('Forecast_TS')
 
 
-                                            ),
-
-                                   tabPanel("Get a stablish Series Time",
-
-                                            h4("Get a stablish Series Time")
-
-                                            ),
-
-                                   tabPanel("Autovariance",
-
-
-                                            h4("Autovariance")
-
-                                            ),
-                                   tabPanel("AutoCorrelation",
-
-                                            h4("AutoCorrelation")
-
                                             )
+
                                    )
 
 
