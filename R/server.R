@@ -1532,7 +1532,7 @@ output$Forecast_TS <- renderPlot({
          ##Pronóstico de la serie de tiempos por ARIMA
          if (input$Forecast_Type==1){
 
-           fit= Arima(TS, order = c(1,1,1))
+           fit= arima(TS, order = c(1,1,1))
 
            ##Predicción: Asignar los periodos
            forecast = forecast(fit,h=Periods)
@@ -1604,12 +1604,12 @@ observeEvent(input$Apply_diff,{
 
           TS_diff<- diff(TS)
 
-          plot(Acf(TS_diff))
+          plot(acf(TS_diff))
 
 
         }else{
 
-          plot(Acf(TS))
+          plot(acf(TS))
 
         }
 
